@@ -57,7 +57,7 @@ void shiftL(uchar a[],uchar aa[],int bi[],int L)
 	}
 }
 
-/*求解循环左移方程*/
+/**************求解循环左移方程**********************/
 void QJ(uchar a1[],uchar a2[],int bi[],uchar c[])
 {
 	int i,n;
@@ -93,7 +93,7 @@ void QJ(uchar a1[],uchar a2[],int bi[],uchar c[])
 		n=bi[n];
 	}
 }
-/*判断两个128bit是否相等*/
+/**************判断两个128bit是否相等**************/
 int yanzheng(uchar k[],uchar a[])
 {
 	int n;
@@ -109,7 +109,7 @@ int yanzheng(uchar k[],uchar a[])
 	return 1;
 }
 
-/*两个128bit异或运算*/
+/**************两个128bit异或运算********************/
 void xor128(uchar a[],uchar b[],uchar c[])
 {
 	int i;
@@ -117,7 +117,7 @@ void xor128(uchar a[],uchar b[],uchar c[])
 		c[i]=a[i]^b[i];
 }
 
-/*16字节转化为128bit*/
+/**************16字节转化为128bit*********************/
 void char16char128(uchar a16[],uchar a128[])
 {
 	int i,j,n=0;
@@ -134,7 +134,7 @@ void char16char128(uchar a16[],uchar a128[])
 
 }
 
-/*128bit转化16字节*/
+/**************128bit转化16字节***********************/
 void char128char16(uchar a128[],uchar a16[])
 {
 	int i,j,n=127;
@@ -156,19 +156,19 @@ void char128char16(uchar a128[],uchar a16[])
 }
 
 /*密钥*/
-uchar K[  ] ={0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF,0xFE,0xDC,0xBA,0x98,0x76,0x54,0x32,0x10};
-//uchar K[16]={0x11,0x23,0x45,0x67,0xa9,0xAD,0xCD,0xEF,0xFE,0xDC,0xBA,0x98,0x76,0x54,0x37,0x17};
-uchar coo[] ={0xa3,0x90,0x81,0xb2,0x6f,0x5c,0x32,0x81,0xa3,0x90,0x81,0xb2,0x6f,0x5c,0x32,0x81};
+  uchar   K[] = {0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF,0xFE,0xDC,0xBA,0x98,0x76,0x54,0x32,0x10};
+//uchar K[16] = {0x11,0x23,0x45,0x67,0xa9,0xAD,0xCD,0xEF,0xFE,0xDC,0xBA,0x98,0x76,0x54,0x37,0x17};
+  uchar coo[] = {0xa3,0x90,0x81,0xb2,0x6f,0x5c,0x32,0x81,0xa3,0x90,0x81,0xb2,0x6f,0x5c,0x32,0x81};
 
 
-/*驱动函数，验证该算法正确与否*/
+/**************驱动函数，验证该算法正确与否**************/
 void main()
 {
 	uchar k[128],kl[128],y[128],b[128],a1[128],a2[128],c[128],K1[16],K2[16],co[128];
 	int bi[128];
 	int i=127,j,z=1;
 	int x=1,aaa=0,bbb=0;
-	
+	/***********************初始化若干128bit变量*********************/
 	init128(k);
 	init128(y);
 	init128(c);
@@ -197,7 +197,7 @@ void main()
 	/***********************128bit循环左移15bit*********************/
 	shiftL(k,y,bi,15);
 	
-	/***********************k异或y，结果在c里 *********************/
+	/***********************k异或y，结果放在c里 *********************/
 	xor128(k,y,c);
 
 	//char128char16(c,K2);
