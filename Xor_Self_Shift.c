@@ -1,3 +1,10 @@
+/*
+* 核心求解函数为  void QJ(uchar a1[],uchar a2[],int bi[],uchar c[])
+* 核心函数QJ只依赖void shiftL_bi(int bi[],int L)
+* 这两个函数即可单独拿出求解，其他函数为验证该求解功能的辅助函数
+*/
+
+
 #include<stdio.h>
 
 typedef unsigned char uchar;
@@ -42,27 +49,45 @@ void shuchu(uchar a[128])
 }
 
 /**************128bit循环左移 **********************/
-void shiftL(uchar a[],uchar aa[],int bi[],int L)
+/****** a是输入，aa输出，L是循环左移的位数**********/
+void shiftL(uchar a[],uchar aa[],int L)
 {
 	int n;
 	for(n=0;n<L;n++)
 	{
 		aa[n]=a[128-L+n];
-		bi[n]=128-L+n;
 	}
 	for(n=L;n<128;n++)
 	{
 		aa[n]=a[n-L];
+	}
+}
+/**************128bit循环左移求系数bi **************/
+/************** L是循环左移的位数*******************/
+void shiftL_bi(int bi[],int L)
+{
+	int n;
+	for(n=0;n<L;n++)
+	{
+		bi[n]=128-L+n;
+	}
+	for(n=L;n<128;n++)
+	{
 		bi[n]=n-L;
 	}
 }
 
-/**************求解循环左移方程**********************/
-void QJ(uchar a1[],uchar a2[],int bi[],uchar c[])
+/* 求解循环左移方程     */
+/* a1、a2是求得的两个解 */
+/* c是输入              */
+/* L为循环左移的位数    */
+void QJ(uchar a1[],uchar a2[],uchar c[],int L)
 {
-	int i,n;
+	int i,n,bi[128];
 	a1[0]=0;
 	a2[0]=1;
+	
+	shiftL_bi(bi,L);
 
 	n=0;
 	for(i=0;i<128;i++)
@@ -93,7 +118,7 @@ void QJ(uchar a1[],uchar a2[],int bi[],uchar c[])
 		n=bi[n];
 	}
 }
-/**************判断两个128bit是否相等**************/
+/*判断两个128bit是否相等*/
 int yanzheng(uchar k[],uchar a[])
 {
 	int n;
@@ -109,7 +134,7 @@ int yanzheng(uchar k[],uchar a[])
 	return 1;
 }
 
-/**************两个128bit异或运算********************/
+/*两个128bit异或运算*/
 void xor128(uchar a[],uchar b[],uchar c[])
 {
 	int i;
@@ -117,7 +142,7 @@ void xor128(uchar a[],uchar b[],uchar c[])
 		c[i]=a[i]^b[i];
 }
 
-/**************16字节转化为128bit*********************/
+/*16字节转化为128bit*/
 void char16char128(uchar a16[],uchar a128[])
 {
 	int i,j,n=0;
@@ -134,7 +159,7 @@ void char16char128(uchar a16[],uchar a128[])
 
 }
 
-/**************128bit转化16字节***********************/
+/*128bit转化16字节*/
 void char128char16(uchar a128[],uchar a16[])
 {
 	int i,j,n=127;
@@ -156,19 +181,19 @@ void char128char16(uchar a128[],uchar a16[])
 }
 
 /*密钥*/
-  uchar   K[] = {0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF,0xFE,0xDC,0xBA,0x98,0x76,0x54,0x32,0x10};
-//uchar K[16] = {0x11,0x23,0x45,0x67,0xa9,0xAD,0xCD,0xEF,0xFE,0xDC,0xBA,0x98,0x76,0x54,0x37,0x17};
-  uchar coo[] = {0xa3,0x90,0x81,0xb2,0x6f,0x5c,0x32,0x81,0xa3,0x90,0x81,0xb2,0x6f,0x5c,0x32,0x81};
+uchar K[  ] ={0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF,0xFE,0xDC,0xBA,0x98,0x76,0x54,0x32,0x10};
+//uchar K[16]={0x11,0x23,0x45,0x67,0xa9,0xAD,0xCD,0xEF,0xFE,0xDC,0xBA,0x98,0x76,0x54,0x37,0x17};
+uchar coo[] ={0xa3,0x90,0x81,0xb2,0x6f,0x5c,0x32,0x81,0xa3,0x90,0x81,0xb2,0x6f,0x5c,0x32,0x81};
 
 
-/**************驱动函数，验证该算法正确与否**************/
+/*驱动函数，验证该算法正确与否*/
 void main()
 {
 	uchar k[128],kl[128],y[128],b[128],a1[128],a2[128],c[128],K1[16],K2[16],co[128];
-	int bi[128];
+	
 	int i=127,j,z=1;
 	int x=1,aaa=0,bbb=0;
-	/***********************初始化若干128bit变量*********************/
+	
 	init128(k);
 	init128(y);
 	init128(c);
@@ -182,6 +207,7 @@ void main()
     
 	/***********************16字节转化为128bit*********************/
 	char16char128(K,k);
+	
 	//char128char16(k,K1);
 
 	/*for(j=0;j<16;++j)
@@ -195,9 +221,10 @@ void main()
 	}
 	printf("\n");*/
 	/***********************128bit循环左移15bit*********************/
-	shiftL(k,y,bi,15);
+	shiftL(k,y,15);
 	
-	/***********************k异或y，结果放在c里 *********************/
+	
+	/***********************k异或y，结果在c里 *********************/
 	xor128(k,y,c);
 
 	//char128char16(c,K2);
@@ -210,7 +237,10 @@ void main()
 	//char16char128(coo,co);
 	
 	/***********************求解循环异或方程 *********************/
-	QJ(a1,a2,bi,c);
+	/* a1、a2是求得的两个解                                      */
+	/* c是输入                                                   */
+	/* L为循环左移的位数                                         */
+	QJ(a1,a2,c,15);
 	
 	/***********************输出计算结果     *********************/
 	/*yanzheng(k,a1);
